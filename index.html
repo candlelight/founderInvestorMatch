@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Investor Match — MVP</title>
+    <style>
+        :root {
+            --apple-blue: #007AFF;
+            --apple-gray: #F2F2F7;
+            --apple-gray-2: #E5E5EA;
+            --apple-text: #1C1C1E;
+            --apple-text-secondary: #8E8E93;
+            --apple-success: #34C759;
+            --apple-orange: #FF9500;
+            --apple-red: #FF3B30;
+            --apple-white: #FFFFFF;
+            --apple-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            --apple-radius: 12px;
+            --apple-radius-lg: 20px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', sans-serif;
+            background: var(--apple-gray);
+            color: var(--apple-text);
+            min-height: 100vh;
+            padding: 20px;
+            padding-bottom: 100px;
+        }
+
+        .container {
+            max-width: 420px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 20px 0 30px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .header p {
+            color: var(--apple-text-secondary);
+            font-size: 15px;
+        }
+
+        /* Card */
+        .card {
+            background: var(--apple-white);
+            border-radius: var(--apple-radius-lg);
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: var(--apple-shadow);
+        }
+
+        .card-header {
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--apple-text-secondary);
+            margin-bottom: 16px;
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: var(--apple-text);
+        }
+
+        .form-select, .form-input {
+            width: 100%;
+            padding: 14px 16px;
+            font-size: 16px;
+            border: 1px solid var(--apple-gray-2);
+            border-radius: var(--apple-radius);
+            background: var(--apple-white);
+            color: var(--apple-text);
+            appearance: none;
+            -webkit-appearance: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .form-select:focus, .form-input:focus {
+            outline: none;
+            border-color: var(--apple-blue);
+            box-shadow: 0 0 0 3px rgba(0,122,255,0.15);
+        }
+
+        .form-select {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238E8E93' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+            padding-right: 40px;
+        }
+
+        /* Tags */
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .tag {
+            padding: 8px 14px;
+            font-size: 14px;
+            font-weight: 500;
+            border-radius: 20px;
+            background: var(--apple-gray);
+            color: var(--apple-text);
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+
+        .tag:hover {
+            background: var(--apple-gray-2);
+        }
+
+        .tag.selected {
+            background: var(--apple-blue);
+            color: white;
+        }
+
+        /* Range Slider */
+        .range-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: var(--apple-text-secondary);
+            margin-top: 6px;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: var(--apple-gray-2);
+            appearance: none;
+            -webkit-appearance: none;
+            margin-top: 8px;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: var(--apple-white);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            cursor: pointer;
+        }
+
+        /* Button */
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 16px;
+            font-size: 17px;
+            font-weight: 600;
+            text-align: center;
+            border: none;
+            border-radius: var(--apple-radius);
+            cursor: pointer;
+            transition: transform 0.1s, opacity 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--apple-blue);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            opacity: 0.9;
+        }
+
+        .btn-primary:active {
+            transform: scale(0.98);
+        }
+
+        /* Results */
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .results-count {
+            font-size: 14px;
+            color: var(--apple-text-secondary);
+        }
+
+        .investor-card {
+            background: var(--apple-white);
+            border-radius: var(--apple-radius);
+            padding: 16px;
+            margin-bottom: 12px;
+            border: 1px solid var(--apple-gray-2);
+        }
+
+        .investor-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+
+        .investor-name {
+            font-size: 17px;
+            font-weight: 600;
+        }
+
+        .investor-match-score {
+            background: var(--apple-success);
+            color: white;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 12px;
+        }
+
+        .investor-tags {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .investor-tag {
+            font-size: 12px;
+            padding: 4px 10px;
+            background: var(--apple-gray);
+            border-radius: 10px;
+            color: var(--apple-text-secondary);
+        }
+
+        .investor-meta {
+            font-size: 13px;
+            color: var(--apple-text-secondary);
+            line-height: 1.5;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            background: var(--apple-gray);
+            border-radius: var(--apple-radius);
+            padding: 4px;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 12px;
+            font-size: 14px;
+            font-weight: 500;
+            text-align: center;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tab.active {
+            background: var(--apple-white);
+            color: var(--apple-blue);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        /* Steps */
+        .step-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .step-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--apple-gray-2);
+        }
+
+        .step-dot.active {
+            background: var(--apple-blue);
+            width: 24px;
+            border-radius: 4px;
+        }
+
+        /* Hide/Show */
+        .hidden {
+            display: none;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--apple-gray-2);
+            border-top-color: var(--apple-blue);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1> Investor Match</h1>
+            <p>Find the right impact investors for your venture</p>
+        </div>
+
+        <!-- Tab Navigation -->
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('discover')">Discover</div>
+            <div class="tab" onclick="switchTab('matches')">My Matches</div>
+        </div>
+
+        <!-- Discover Tab -->
+        <div id="discover-tab">
+            <!-- Step 1: Founder Info -->
+            <div id="step-1">
+                <div class="card">
+                    <div class="card-header">About Your Venture</div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Location</label>
+                        <select class="form-select" id="location">
+                            <option value="">Select location...</option>
+                            <option value="us">United States</option>
+                            <option value="eu">Europe</option>
+                            <option value="latam">Latin America</option>
+                            <option value="asia">Asia</option>
+                            <option value="global">Global</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Stage</label>
+                        <select class="form-select" id="stage">
+                            <option value="">Select stage...</option>
+                            <option value="pre-seed">Pre-Seed</option>
+                            <option value="seed">Seed</option>
+                            <option value="series-a">Series A</option>
+                            <option value="growth">Growth</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Primary Industry</label>
+                        <select class="form-select" id="industry">
+                            <option value="">Select industry...</option>
+                            <option value="climate">Climate / Sustainability</option>
+                            <option value="health">Health / Healthcare</option>
+                            <option value="education">Education</option>
+                            <option value="fintech">Fintech / Financial Inclusion</option>
+                            <option value="agtech">AgTech / Food Systems</option>
+                            <option value="gender">Gender Equity</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">What does your product do?</label>
+                        <input type="text" class="form-input" id="product" placeholder="e.g., Recycling plastic into yoga mats">
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">Investment Preferences</div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Investor Type</label>
+                        <div class="tags">
+                            <span class="tag" onclick="toggleTag(this)">Impact Investor</span>
+                            <span class="tag" onclick="toggleTag(this)">Strategic Corporate</span>
+                            <span class="tag" onclick="toggleTag(this)">Angel Investor</span>
+                            <span class="tag" onclick="toggleTag(this)">Family Office</span>
+                            <span class="tag" onclick="toggleTag(this)">Institutional LP</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Check Size Needed</label>
+                        <input type="range" min="1" max="4" value="2" id="checkSize" oninput="updateRangeLabel()">
+                        <div class="range-labels">
+                            <span>$50K</span>
+                            <span>$500K</span>
+                            <span>$2M</span>
+                            <span>$10M+</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Additional Tags</label>
+                        <div class="tags">
+                            <span class="tag" onclick="toggleTag(this)">Climate Focus</span>
+                            <span class="tag" onclick="toggleTag(this)">Health Impact</span>
+                            <span class="tag" onclick="toggleTag(this)">Gender Lens</span>
+                            <span class="tag" onclick="toggleTag(this)">Underserved Regions</span>
+                            <span class="tag" onclick="toggleTag(this)">Deep Tech</span>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" onclick="findMatches()">Find My Investors</button>
+            </div>
+        </div>
+
+        <!-- Loading State -->
+        <div id="loading" class="hidden">
+            <div class="card">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Finding the best matches...</p>
+                    <p style="font-size: 13px; color: var(--apple-text-secondary); margin-top: 8px;">Scanning 50+ impact investors</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Matches Tab -->
+        <div id="matches-tab" class="hidden">
+            <div class="card">
+                <div class="results-header">
+                    <div class="card-header" style="margin:0;">Top Matches</div>
+                    <div class="results-count">5 investors found</div>
+                </div>
+            </div>
+
+            <!-- Investor 1 -->
+            <div class="investor-card">
+                <div class="investor-header">
+                    <div>
+                        <div class="investor-name">Acumen</div>
+                        <div class="investor-meta">Pioneer in impact investing since 2001</div>
+                    </div>
+                    <div class="investor-match-score">98%</div>
+                </div>
+                <div class="investor-meta">
+                    <strong>Check size:</strong> $500K – $5M<br>
+                    <strong>Stage:</strong> Seed – Series A<br>
+                    <strong>Location:</strong> Global (US, LATAM, EU, Africa)
+                </div>
+                <div class="investor-tags">
+                    <span class="investor-tag">Climate</span>
+                    <span class="investor-tag">Health</span>
+                    <span class="investor-tag">Gender Lens</span>
+                </div>
+            </div>
+
+            <!-- Investor 2 -->
+            <div class="investor-card">
+                <div class="investor-header">
+                    <div>
+                        <div class="investor-name">Omidyar Network</div>
+                        <div class="investor-meta">Social change venture firm</div>
+                    </div>
+                    <div class="investor-match-score" style="background: var(--apple-orange);">92%</div>
+                </div>
+                <div class="investor-meta">
+                    <strong>Check size:</strong> $250K – $3M<br>
+                    <strong>Stage:</strong> Seed – Series A<br>
+                    <strong>Location:</strong> Global
+                </div>
+                <div class="investor-tags">
+                    <span class="investor-tag">Education</span>
+                    <span class="investor-tag">Governance</span>
+                    <span class="investor-tag">Financial Inclusion</span>
+                </div>
+            </div>
+
+            <!-- Investor 3 -->
+            <div class="investor-card">
+                <div class="investor-header">
+                    <div>
+                        <div class="investor-name">Reach Capital</div>
+                        <div class="investor-meta">Education & workforce impact</div>
+                    </div>
+                    <div class="investor-match-score" style="background: var(--apple-orange);">87%</div>
+                </div>
+                <div class="investor-meta">
+                    <strong>Check size:</strong> $100K – $2M<br>
+                    <strong>Stage:</strong> Pre-seed – Series A<br>
+                    <strong>Location:</strong> US Focus
+                </div>
+                <div class="investor-tags">
+                    <span class="investor-tag">Education</span>
+                    <span class="investor-tag">EdTech</span>
+                    <span class="investor-tag">STEM</span>
+                </div>
+            </div>
+
+            <!-- Investor 4 -->
+            <div class="investor-card">
+                <div class="investor-header">
+                    <div>
+                        <div class="investor-name">Climate Impact Ventures</div>
+                        <div class="investor-meta">Early-stage climate solutions</div>
+                    </div>
+                    <div class="investor-match-score">84%</div>
+                </div>
+                <div class="investor-meta">
+                    <strong>Check size:</strong> $250K – $1M<br>
+                    <strong>Stage:</strong> Seed<br>
+                    <strong>Location:</strong> US & Europe
+                </div>
+                <div class="investor-tags">
+                    <span class="investor-tag">Climate</span>
+                    <span class="investor-tag">CleanTech</span>
+                    <span class="investor-tag">Circular Economy</span>
+                </div>
+            </div>
+
+            <!-- Investor 5 -->
+            <div class="investor-card">
+                <div class="investor-header">
+                    <div>
+                        <div class="investor-name">Women’s Venture Capital Fund</div>
+                        <div class="investor-meta">Gender-lens investing</div>
+                    </div>
+                    <div class="investor-match-score" style="background: var(--apple-text-secondary);">76%</div>
+                </div>
+                <div class="investor-meta">
+                    <strong>Check size:</strong> $100K – $1.5M<br>
+                    <strong>Stage:</strong> Seed – Series A<br>
+                    <strong>Location:</strong> Global
+                </div>
+                <div class="investor-tags">
+                    <span class="investor-tag">Gender Lens</span>
+                    <span class="investor-tag">Women-Led</span>
+                    <span class="investor-tag">Climate</span>
+                </div>
+            </div>
+
+            <button class="btn btn-primary" style="margin-top: 20px;">Save These Matches</button>
+        </div>
+    </div>
+
+    <script>
+        function toggleTag(element) {
+            element.classList.toggle('selected');
+        }
+
+        function updateRangeLabel() {
+            const ranges = ['$50K - $500K', '$500K - $2M', '$2M - $5M', '$10M+'];
+            const value = document.getElementById('checkSize').value;
+        }
+
+        function switchTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            if (tab === 'discover') {
+                document.getElementById('discover-tab').classList.remove('hidden');
+                document.getElementById('matches-tab').classList.add('hidden');
+            } else {
+                document.getElementById('discover-tab').classList.add('hidden');
+                document.getElementById('matches-tab').classList.remove('hidden');
+            }
+        }
+
+        function findMatches() {
+            const location = document.getElementById('location').value;
+            const stage = document.getElementById('stage').value;
+            const industry = document.getElementById('industry').value;
+            const product = document.getElementById('product').value;
+
+            if (!location || !stage || !industry) {
+                alert('Please fill in location, stage, and industry');
+                return;
+            }
+
+            document.getElementById('discover-tab').classList.add('hidden');
+            document.getElementById('loading').classList.remove('hidden');
+
+            setTimeout(() => {
+                document.getElementById('loading').classList.add('hidden');
+                document.getElementById('matches-tab').classList.remove('hidden');
+                document.querySelectorAll('.tab')[1].click();
+            }, 1500);
+        }
+    </script>
+</body>
+</html>
